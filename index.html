@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>角度大冒险</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 开场场景 -->
+    <div id="introScene" class="intro-scene">
+        <div class="stars"></div>
+        <div class="intro-content">
+            <div class="intro-title">🚀 角度大冒险</div>
+            <div class="intro-text">
+                <p class="intro-line">欢迎来到太空训练基地，船长！</p>
+                <p class="intro-line">你即将驾驶宇宙飞船，在浩瀚的星空中执行一系列导航任务。</p>
+                <p class="intro-line">掌握角度的概念，是成为一名优秀太空飞行员的关键。</p>
+                <p class="intro-line">准备好了吗？让我们开始这段精彩的太空之旅！</p>
+            </div>
+            <button id="startGameBtn" class="intro-button">进入太空镜像</button>
+        </div>
+    </div>
+
+    <div class="game-container" id="gameContainer" style="display: none;">
+        <!-- 顶部标题区 -->
+        <header class="header">
+            <h1 class="title">角度大冒险</h1>
+            <div class="title-icon">🚀</div>
+        </header>
+
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 左侧任务面板 -->
+            <aside class="task-panel">
+                <div class="task-title">任务列表</div>
+                <div class="task-list" id="taskList">
+                    <!-- 任务列表项将通过JavaScript动态生成 -->
+                </div>
+                <div class="task-title" style="margin-top: 10px;">当前任务</div>
+                <div class="task-name" id="taskName">任务1：零的起点</div>
+                <div class="task-description" id="taskDescription">
+                    欢迎，船长！请调整飞船航向至初始位置（0°）。
+                </div>
+                <div class="task-target" id="taskTarget">目标：旋转到 0°</div>
+                <div class="task-feedback" id="taskFeedback"></div>
+            </aside>
+
+            <!-- 中央操作区 -->
+            <main class="operation-area">
+                <div class="canvas-container">
+                    <canvas id="gameCanvas" width="360" height="360"></canvas>
+                    <div class="rotation-hint">拖动飞船进行旋转</div>
+                </div>
+                <div class="control-buttons">
+                    <button class="btn-rotate" id="btnCounterClockwise">↺ 逆时针</button>
+                    <button class="btn-rotate" id="btnClockwise">↻ 顺时针</button>
+                </div>
+            </main>
+
+            <!-- 右侧数据面板 -->
+            <aside class="data-panel">
+                <div class="data-section">
+                    <div class="data-title">实时角度</div>
+                    <div class="angle-display">
+                        <span id="currentAngle">0</span>°
+                    </div>
+                </div>
+                
+                <div class="data-section">
+                    <div class="data-title">等效主角度</div>
+                    <div class="angle-display" id="normalizedAngle">0°</div>
+                </div>
+
+                <div class="data-section">
+                    <div class="data-title">当前圈数</div>
+                    <div class="loop-display">
+                        <span id="currentLoop">0</span>
+                    </div>
+                </div>
+
+                <div class="data-section">
+                    <div class="data-title">旋转历史</div>
+                    <div class="history-list" id="historyList">
+                        <div class="history-item">初始位置：0°</div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- 底部控制区 -->
+        <footer class="control-panel">
+            <div class="progress-info">
+                <div class="progress-label">任务进度</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">1 / 6</div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn-primary" id="btnSubmit">提交答案</button>
+                <button class="btn-secondary" id="btnReset">重置</button>
+            </div>
+        </footer>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
+
