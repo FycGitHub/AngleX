@@ -2,17 +2,29 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html {
+    height: 100%;
 }
 
 body {
-    font-family: 'Microsoft YaHei', 'Arial', sans-serif;
+    font-family: 'Microsoft YaHei', 'PingFang SC', 'Helvetica Neue', 'Arial', sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 5px;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .game-container {
@@ -228,6 +240,10 @@ body {
     height: auto;
     max-width: min(380px, 25vw, 100%);
     max-height: min(380px, 25vw);
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-drag: none;
+    user-select: none;
 }
 
 #gameCanvas:active {
@@ -458,31 +474,205 @@ body {
     }
 }
 
+/* ============== 移动端 / 平板（≤900px） ============== */
 @media (max-width: 900px) {
+    body {
+        display: block;
+        padding: 0;
+        align-items: stretch;
+        justify-content: flex-start;
+        min-height: 100vh;
+        min-height: 100dvh;
+    }
+
     .game-container {
         max-width: 100%;
-        padding: clamp(8px, 1vw, 15px);
+        width: 100%;
+        max-height: none;
+        min-height: 100vh;
+        min-height: 100dvh;
+        margin: 0;
+        padding: 12px 12px 0 12px;
+        padding-top: max(12px, env(safe-area-inset-top));
+        padding-left: max(12px, env(safe-area-inset-left));
+        padding-right: max(12px, env(safe-area-inset-right));
+        /* 给底部 fixed 操作栏预留空间，避免遮挡内容（操作栏实际高度约 130px） */
+        padding-bottom: calc(150px + env(safe-area-inset-bottom));
+        border-radius: 0;
+        box-shadow: none;
+        overflow: visible;
+        gap: 12px;
     }
-    
+
+    .header {
+        margin-bottom: 0;
+    }
+
+    .title {
+        font-size: 24px;
+    }
+
+    .title-icon {
+        font-size: 20px;
+    }
+
     .main-content {
         grid-template-columns: 1fr;
         grid-template-rows: auto auto auto;
-        gap: clamp(8px, 1vw, 12px);
+        gap: 12px;
+        overflow: visible;
+        min-height: auto;
     }
-    
+
+    /* 移动端阅读顺序：操作 > 数据 > 任务列表 */
+    .operation-area { order: 1; }
+    .data-panel     { order: 2; }
+    .task-panel     { order: 3; }
+
     .task-panel,
-    .data-panel {
-        max-height: clamp(200px, 25vh, 300px);
-        overflow-y: auto;
-    }
-    
-    #gameCanvas {
-        max-width: min(300px, 70vw, 100%);
-        max-height: min(300px, 70vw);
-    }
-    
+    .data-panel,
     .operation-area {
-        gap: clamp(6px, 0.8vw, 10px);
+        max-height: none;
+        overflow: visible;
+    }
+
+    .task-panel {
+        padding: 14px;
+        gap: 8px;
+    }
+
+    .data-panel {
+        padding: 14px;
+        gap: 10px;
+    }
+
+    .task-title {
+        font-size: 15px;
+    }
+
+    .task-name {
+        font-size: 17px;
+    }
+
+    .task-description {
+        font-size: 14px;
+        min-height: auto;
+    }
+
+    .task-target {
+        font-size: 14px;
+    }
+
+    .task-item {
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+
+    .task-list {
+        max-height: 180px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .data-title {
+        font-size: 13px;
+    }
+
+    .angle-display,
+    .loop-display {
+        font-size: 26px;
+    }
+
+    .history-list {
+        max-height: 110px;
+        font-size: 13px;
+    }
+
+    .history-item {
+        padding: 6px 8px;
+        font-size: 12px;
+    }
+
+    /* Canvas 与操作区 */
+    .canvas-container {
+        padding: 12px;
+        width: auto;
+    }
+
+    #gameCanvas {
+        max-width: min(420px, 82vw);
+        max-height: min(420px, 82vw);
+    }
+
+    .rotation-hint {
+        font-size: 12px;
+        margin-top: 6px;
+    }
+
+    .control-buttons {
+        gap: 16px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .btn-rotate {
+        min-height: 44px;
+        padding: 10px 22px;
+        font-size: 14px;
+        border-radius: 22px;
+    }
+
+    /* === 底部吸底操作栏 === */
+    .control-panel {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: 0;
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px 14px;
+        padding-left: max(14px, env(safe-area-inset-left));
+        padding-right: max(14px, env(safe-area-inset-right));
+        padding-bottom: calc(10px + env(safe-area-inset-bottom));
+        border-radius: 14px 14px 0 0;
+        box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.18);
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        z-index: 100;
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+    }
+
+    .progress-info {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .progress-label {
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+
+    .progress-bar {
+        height: 14px;
+    }
+
+    .progress-text {
+        font-size: 12px;
+    }
+
+    .action-buttons {
+        width: 100%;
+        gap: 10px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        flex: 1;
+        min-height: 44px;
+        padding: 11px 18px;
+        font-size: 15px;
+        border-radius: 22px;
     }
 }
 
@@ -534,6 +724,10 @@ body {
     color: white;
     padding: 40px;
     max-width: 800px;
+    width: 100%;
+    min-width: 0;
+    word-break: break-word;
+    overflow-wrap: break-word;
     animation: fadeInUp 1s ease-out;
 }
 
@@ -633,57 +827,155 @@ body {
     }
 }
 
+/* ============== 开场场景小屏适配 ============== */
 @media (max-width: 768px) {
-    .intro-title {
-        font-size: 36px;
-    }
-    
-    .intro-text {
-        font-size: 16px;
-    }
-    
-    .intro-button {
-        padding: 12px 30px;
-        font-size: 16px;
-    }
-}
-
-@media (max-width: 768px) {
-    .title {
-        font-size: clamp(20px, 2.5vw, 32px);
-    }
-    
-    .control-panel {
-        flex-direction: column;
-        gap: clamp(10px, 1.5vw, 15px);
-    }
-    
-    .progress-info {
+    .intro-content {
+        padding: 24px 20px;
         max-width: 100%;
     }
-    
-    .game-container {
-        padding: clamp(5px, 1vw, 10px);
+
+    .intro-title {
+        font-size: 32px;
+        margin-bottom: 24px;
+    }
+
+    .intro-text {
+        font-size: 15px;
+        line-height: 1.7;
+        margin-bottom: 30px;
+    }
+
+    .intro-line {
+        margin: 14px 0;
+    }
+
+    .intro-button {
+        padding: 14px 32px;
+        font-size: 16px;
+        min-height: 48px;
     }
 }
 
-@media (max-width: 600px) {
+/* ============== 小屏手机（≤480px） ============== */
+@media (max-width: 480px) {
     .game-container {
-        padding: clamp(5px, 1vw, 8px);
-        gap: clamp(5px, 1vw, 10px);
+        padding: 10px 10px 0 10px;
+        padding-top: max(10px, env(safe-area-inset-top));
+        padding-left: max(10px, env(safe-area-inset-left));
+        padding-right: max(10px, env(safe-area-inset-right));
+        padding-bottom: calc(160px + env(safe-area-inset-bottom));
+        gap: 10px;
     }
-    
-    #gameCanvas {
-        max-width: min(250px, 75vw, 100%);
-        max-height: min(250px, 75vw);
+
+    .title {
+        font-size: 22px;
     }
-    
-    .operation-area {
-        gap: clamp(5px, 0.7vw, 8px);
+
+    .title-icon {
+        font-size: 18px;
     }
-    
+
+    .task-panel,
+    .data-panel {
+        padding: 12px;
+    }
+
+    .task-name {
+        font-size: 16px;
+    }
+
+    .angle-display,
+    .loop-display {
+        font-size: 24px;
+    }
+
     .canvas-container {
-        padding: clamp(6px, 0.8vw, 10px);
+        padding: 10px;
+    }
+
+    #gameCanvas {
+        max-width: min(360px, 80vw);
+        max-height: min(360px, 80vw);
+    }
+
+    .control-buttons {
+        gap: 10px;
+    }
+
+    .btn-rotate {
+        padding: 10px 16px;
+        font-size: 13px;
+        flex: 1;
+        max-width: 160px;
+    }
+
+    .control-panel {
+        padding: 10px 12px;
+        padding-left: max(12px, env(safe-area-inset-left));
+        padding-right: max(12px, env(safe-area-inset-right));
+        padding-bottom: calc(10px + env(safe-area-inset-bottom));
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        font-size: 14px;
+        padding: 11px 14px;
+    }
+
+    .intro-title {
+        font-size: 28px;
+    }
+
+    .intro-text {
+        font-size: 14px;
+    }
+}
+
+/* ============== 极小屏（≤360px，老款 Android / iPhone SE 1） ============== */
+@media (max-width: 360px) {
+    .title {
+        font-size: 20px;
+    }
+
+    #gameCanvas {
+        max-width: min(300px, 78vw);
+        max-height: min(300px, 78vw);
+    }
+
+    .angle-display,
+    .loop-display {
+        font-size: 22px;
+    }
+
+    .btn-rotate {
+        padding: 9px 12px;
+        font-size: 12px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        font-size: 13px;
+        padding: 10px 12px;
+    }
+}
+
+/* ============== 横屏手机（高度受限） ============== */
+@media (max-height: 500px) and (orientation: landscape) and (max-width: 900px) {
+    .game-container {
+        padding-bottom: calc(110px + env(safe-area-inset-bottom));
+    }
+
+    #gameCanvas {
+        max-width: min(280px, 50vh);
+        max-height: min(280px, 50vh);
+    }
+
+    .task-list {
+        max-height: 120px;
+    }
+
+    .history-list {
+        max-height: 80px;
     }
 }
 
