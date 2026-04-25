@@ -1269,3 +1269,80 @@ if (document.readyState === 'loading') {
     initIntroScene();
 }
 
+// 禁止 iOS Safari / 微信 WebView 的页面缩放
+// 1) 拦 iOS 私有的双指手势（user-scalable=no 在 iOS 10+ 已被忽略）
+['gesturestart', 'gesturechange', 'gestureend'].forEach(evt => {
+    document.addEventListener(evt, e => e.preventDefault(), { passive: false });
+});
+
+// 2) 拦双击放大：300ms 内两次 touchend 视为双击；
+//    仅在非交互元素上拦截，避免阻塞旋转按钮等的连续点击
+let lastTouchEnd = 0;
+let lastTouchX = 0;
+let lastTouchY = 0;
+document.addEventListener('touchend', e => {
+    const now = Date.now();
+    const t = e.changedTouches && e.changedTouches[0];
+    const x = t ? t.clientX : 0;
+    const y = t ? t.clientY : 0;
+    const isInteractive = e.target && e.target.closest &&
+        e.target.closest('button, a, input, select, textarea, canvas, [role="button"]');
+    if (!isInteractive &&
+        now - lastTouchEnd < 300 &&
+        Math.abs(x - lastTouchX) < 30 &&
+        Math.abs(y - lastTouchY) < 30) {
+        e.preventDefault();
+    }
+    lastTouchEnd = now;
+    lastTouchX = x;
+    lastTouchY = y;
+}, { passive: false });
+
+// 3) 兜底：dblclick / 浏览器自带 wheel+ctrl 缩放
+document.addEventListener('dblclick', e => e.preventDefault(), { passive: false });
+document.addEventListener('wheel', e => {
+    if (e.ctrlKey) e.preventDefault();
+}, { passive: false });
+
+// 4) 关键按钮兜底：iOS 在按钮上识别 double-tap 触发 zoom 的概率最高，
+//    用 touchend 直接 preventDefault 并立即派发 click，绕开系统的双击窗口
+function bindTapGuard(el) {
+    if (!el) return;
+    let touchMoved = false;
+    let startX = 0, startY = 0;
+    el.addEventListener('touchstart', e => {
+        touchMoved = false;
+        const t = e.touches[0];
+        startX = t.clientX;
+        startY = t.clientY;
+    }, { passive: true });
+    el.addEventListener('touchmove', e => {
+        const t = e.touches[0];
+        if (Math.abs(t.clientX - startX) > 10 ||
+            Math.abs(t.clientY - startY) > 10) {
+            touchMoved = true;
+        }
+    }, { passive: true });
+    el.addEventListener('touchend', e => {
+        e.preventDefault();
+        if (!touchMoved) el.click();
+    }, { passive: false });
+}
+
+// 在初始化时给所有交互按钮挂载兜底（DOM 已就绪后调用）
+function installTapGuards() {
+    [
+        document.getElementById('btnCounterClockwise'),
+        document.getElementById('btnClockwise'),
+        document.getElementById('btnSubmit'),
+        document.getElementById('btnReset'),
+        document.getElementById('startGameBtn')
+    ].forEach(bindTapGuard);
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', installTapGuards);
+} else {
+    installTapGuards();
+}
+

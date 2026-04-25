@@ -7,6 +7,21 @@
 
 html {
     height: 100%;
+    /* 仅允许平移滚动，禁用双击缩放与双指缩放 */
+    touch-action: pan-x pan-y;
+}
+
+/* 所有可点击元素显式声明 manipulation——
+   iOS Safari 在按钮上仍可能触发双击缩放，
+   manipulation 明确告诉 iOS：保留 click，禁双击缩放 */
+button,
+.btn-rotate,
+.btn-primary,
+.btn-secondary,
+.task-item,
+.intro-button,
+[role="button"] {
+    touch-action: manipulation;
 }
 
 body {
@@ -25,6 +40,7 @@ body {
     text-size-adjust: 100%;
     -webkit-user-select: none;
     user-select: none;
+    touch-action: pan-x pan-y;
 }
 
 .game-container {
